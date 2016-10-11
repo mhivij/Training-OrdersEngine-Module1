@@ -1,0 +1,6 @@
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\bin\Debug\Training Orders Engine.pdb
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\obj\Debug\Training Orders Engine.csprojResolveAssemblyReference.cache
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\obj\Debug\Training Orders Engine.pdb
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\bin\Debug\Training Orders Engine.exe
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\obj\Debug\Training Orders Engine.exe
+c:\users\siddharth.bhatnagar\documents\visual studio 2015\Projects\Training Orders Engine\Training Orders Engine\bin\Debug\Training Orders Engine.exe.config
