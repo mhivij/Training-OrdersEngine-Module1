@@ -28,7 +28,7 @@ namespace ClassLibrary1
         DtExcelData = new DataTable();
             DtSqlData = new DataTable();
 
-            string Exfilepath = @"C:\Users\siddharth.bhatnagar\Desktop\Customer.xlsx";
+            string Exfilepath = @"";    //Put your Excel file path here
            //If you MS Excel 2007 then use below lin instead of above line
            ExcelConn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + Exfilepath + "';Extended Properties='Excel 12.0;hdr=yes;'");
 
@@ -237,38 +237,37 @@ namespace ClassLibrary1
         public void orders()
         {
             Boolean flag = true;
-            OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=Yes'"); 
+            OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
-
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
             while (exl_dr.Read())
-            {               
+            {
                 //SQL connection Object here:
-                SqlConnection sqlconn = new SqlConnection(ssqlconnectionstring);
-                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", sqlconn);
-                sqlconn.Open();
+                SqlConnection Conn = new SqlConnection(ssqlconnectionstring);
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", Conn);
+                Conn.Open();
                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
                 while (sql_dr.Read())
                 {
                     if (sql_dr[0].ToString() == exl_dr[0].ToString())
                     {
-                        flag = true;                       
+                        flag = true;
                         break;
                     }
                     else
                     {
-                        flag = false;                        
+                        flag = false;
                     }
                 }
-                sqlconn.Close();
+                Conn.Close();
                 if (flag == true)
                 {
                     //Updation
-                    sqlconn = new SqlConnection(ssqlconnectionstring);                    
-                    SqlCommand cmd = new SqlCommand("Update [dbo].[OrdersCopy] set OrderID=@OrderID, CustomerID=@CustomerID, OrderStatusID=@OrderStatusID, OrderDate=@OrderDate, CurrencyCode=@CurrencyCode, WarehouseID=@WarehouseID, ShipMethodID=@ShipMethodID, OrderTypeID=@OrderTypeID, PriceTypeID=@PriceTypeID, FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, NameSuffix=@NameSuffix, Company=@Company, Address1=@Address1, Address2=@Address2, Address3=@Address3, City=@City, State=@State, Zip=@Zip, Country=@Country, County=@County, Email=@Email, Phone=@Phone, Notes=@Notes, Total=@Total, SubTotal=@SubTotal, TaxTotal=@TaxTotal, ShippingTotal=@ShippingTotal, DiscountTotal=@DiscountTotal, DiscountPercent=@DiscountPercent, WeightTotal=@WeightTotal, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy where OrderID="+exl_dr[0].ToString());
+                    Conn = new SqlConnection(ssqlconnectionstring);
+                    SqlCommand cmd = new SqlCommand("Update [dbo].[OrdersCopy] set OrderID=@OrderID, CustomerID=@CustomerID, OrderStatusID=@OrderStatusID, OrderDate=@OrderDate, CurrencyCode=@CurrencyCode, WarehouseID=@WarehouseID, ShipMethodID=@ShipMethodID, OrderTypeID=@OrderTypeID, PriceTypeID=@PriceTypeID, FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, NameSuffix=@NameSuffix, Company=@Company, Address1=@Address1, Address2=@Address2, Address3=@Address3, City=@City, State=@State, Zip=@Zip, Country=@Country, County=@County, Email=@Email, Phone=@Phone, Notes=@Notes, Total=@Total, SubTotal=@SubTotal, TaxTotal=@TaxTotal, ShippingTotal=@ShippingTotal, DiscountTotal=@DiscountTotal, DiscountPercent=@DiscountPercent, WeightTotal=@WeightTotal, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy where OrderID=" + exl_dr[0].ToString());
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = sqlconn;
+                    cmd.Connection = Conn;
                     //Values into parameters
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
@@ -306,7 +305,7 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    sqlconn.Open();
+                    Conn.Open();
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
 
@@ -314,13 +313,13 @@ namespace ClassLibrary1
                 else
                 {
                     //Insertion
-                    sqlconn = new SqlConnection(ssqlconnectionstring);                    
+                    Conn = new SqlConnection(ssqlconnectionstring);
                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrdersCopy] values (@OrderID, @CustomerID, @OrderStatusID, @OrderDate, @CurrencyCode, @WarehouseID, @ShipMethodID, @OrderTypeID, @PriceTypeID, @FirstName, @MiddleName, @LastName, @NameSuffix, @Company, @Address1, @Address2, @Address3, @City, @State, @Zip, @Country, @County, @Email, @Phone, @Notes, @Total, @SubTotal, @TaxTotal, @ShippingTotal, @DiscountTotal, @DiscountPercent, @WeightTotal, @CreatedDate, @ModifiedDate, @CreatedBy, @ModifiedBy)");
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = sqlconn;                   
+                    cmd.Connection = Conn;
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
-                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[2].ToString()));                   
+                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[2].ToString()));
                     cmd.Parameters.AddWithValue("@OrderDate", exl_dr[3].ToString());
                     cmd.Parameters.AddWithValue("@CurrencyCode", exl_dr[4].ToString());
                     cmd.Parameters.AddWithValue("@WarehouseID", Int32.Parse(exl_dr[5].ToString()));
@@ -349,16 +348,16 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ShippingTotal", Decimal.Parse(exl_dr[28].ToString()));
                     cmd.Parameters.AddWithValue("@DiscountTotal", Decimal.Parse(exl_dr[29].ToString()));
                     cmd.Parameters.AddWithValue("@DiscountPercent", Decimal.Parse(exl_dr[30].ToString()));
-                    cmd.Parameters.AddWithValue("@WeightTotal", Decimal.Parse(exl_dr[31].ToString()));                    
-                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[32].ToString());                    
+                    cmd.Parameters.AddWithValue("@WeightTotal", Decimal.Parse(exl_dr[31].ToString()));
+                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[32].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    sqlconn.Open();
+                    Conn.Open();
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
                 }
-                sqlconn.Close();
+                Conn.Close();
             }
         }
         public void order_status()
