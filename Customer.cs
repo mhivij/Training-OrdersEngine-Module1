@@ -11,11 +11,18 @@ namespace Training_Orders_Engine
         public static void Main(string[] args)
         {
             Connection.connect();
-            new ConnectAndViewExcel().excel();
-
-
-            //Console.WriteLine("Connection successfull");
+            Console.WriteLine("Customers");
+            Console.WriteLine("Enter 1 for customers");
+            int value = Console.Read();
+            switch (value)
+            {
+                case 49:
+                    new ConnectAndViewExcel().excel();
+                    break;
+            }
             Console.ReadLine();
+
         }
+        
     }
 }
