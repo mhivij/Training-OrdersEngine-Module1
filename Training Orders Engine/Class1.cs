@@ -438,6 +438,90 @@ namespace ClassLibrary1
             } while (allow.ToLower() == "y");
 
         }
+        public void order_history()
+        {
+            Boolean flag = false;
+            OleDbConnection exlconn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderHistory.xlsx;Extended Properties='Excel 12.0;HDR=Yes'");        //to be changed
+            OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
+            exlconn.Open();
+            OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
+            while (exl_dr.Read())
+            {
+    
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
+     
+                SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
+                
+                while (sql_dr.Read())
+                {
+                    if (sql_dr[1].ToString() == exl_dr[0].ToString())
+                    {
+                        flag = true;
+                        break;
+                    }
+                    else
+                    {
+                        flag = false;
+                    }
+                }
+                sql_dr.Close();
+                if (flag)
+                {
+                    SqlCommand cmd = new SqlCommand("update [dbo].[OrderHistory] set OrderID=@OrderID, OrderStatusID=@OrderStatusID, CreatedDate=@CreatedDate, CreatedBy=@CreatedBy where OrderID=" + exl_dr[0].ToString());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = Conn;
+                    cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
+                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
+                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
+                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
+                   
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("OrderID: " + exl_dr[0] + "Updated");
+                }
+                else
+                {
+                    SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderHistory] values (@OrderID, @OrderStatusID, @CreatedDate, @CreatedBy)");
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = Conn;
+                    cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
+                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
+                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
+                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
+                    Conn.Open();
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
+                }
+                //Conn.Close();
+            }
+
+            ////Fetching OrderStatusDescription for OrderStatusTable
+
+            //SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
+         
+            //SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader();
+            //while (sql_dr_OH.Read())
+            //{
+   
+            //    SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn);
+               
+            //    SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
+            //    while (sql_dr_OS.Read())
+            //    {
+            //        if (sql_dr_OH[2] == sql_dr_OS[0])
+            //        {
+            //            Console.WriteLine(sql_dr_OS[0].ToString());
+            //        }
+            //        else
+            //        {
+            //            Console.WriteLine("Invalid OrderStatusID");
+            //        }
+            //    }
+            //}
+
+
+            //sql_dr_OH.Close();
+        }
+        
         public static void Main(string[] args)
         {
             Class1 obj = new Class1();
@@ -446,7 +530,7 @@ namespace ClassLibrary1
             int option;
             do
             {
-                Console.WriteLine("Choose the operation you wanna do:\n1.Customer\n2.Order\n3.Order Status");
+                Console.WriteLine("Choose the operation you wanna do:\n1.Customer\n2.Order\n3.Order Status\n4. Order History");
                 option = Convert.ToInt32((Console.ReadLine()));
                 if (option == 1)
                 {
@@ -459,6 +543,10 @@ namespace ClassLibrary1
                 else if (option == 3)
                 {
                     obj.order_status();
+                }
+                else if (option == 4)
+                {
+                    obj.order_history();
                 }
                 else
                 {
