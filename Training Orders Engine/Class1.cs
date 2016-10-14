@@ -11,8 +11,8 @@ namespace ClassLibrary1
 {
     public class Class1
     {
-        const string sexcelconnectionstring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=No'";
-        const string ssqlconnectionstring = "Data Source=CYG155\\SQLEXPRESS;Initial Catalog = Training Orders Engine Sandbox;Integrated Security=SSPI;";
+       // const string sexcelconnectionstring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=No'";
+        //const string ssqlconnectionstring = "Data Source=CYG155\\SQLEXPRESS;Initial Catalog = Training Orders Engine Sandbox;Integrated Security=SSPI;";
         DataTable DtExcelData;
         DataTable DtSqlData;
         OleDbConnection ExcelConn;
@@ -244,9 +244,8 @@ namespace ClassLibrary1
             while (exl_dr.Read())
             {
                 //SQL connection Object here:
-                SqlConnection sqlconn = new SqlConnection(ssqlconnectionstring);
-                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", sqlconn);
-                sqlconn.Open();
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", Conn);
+             
                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
                 while (sql_dr.Read())
                 {
@@ -260,14 +259,13 @@ namespace ClassLibrary1
                         flag = false;
                     }
                 }
-                sqlconn.Close();
+                sql_dr.Close();
                 if (flag == true)
                 {
                     //Updation
-                    sqlconn = new SqlConnection(ssqlconnectionstring);
                     SqlCommand cmd = new SqlCommand("Update [dbo].[OrdersCopy] set OrderID=@OrderID, CustomerID=@CustomerID, OrderStatusID=@OrderStatusID, OrderDate=@OrderDate, CurrencyCode=@CurrencyCode, WarehouseID=@WarehouseID, ShipMethodID=@ShipMethodID, OrderTypeID=@OrderTypeID, PriceTypeID=@PriceTypeID, FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, NameSuffix=@NameSuffix, Company=@Company, Address1=@Address1, Address2=@Address2, Address3=@Address3, City=@City, State=@State, Zip=@Zip, Country=@Country, County=@County, Email=@Email, Phone=@Phone, Notes=@Notes, Total=@Total, SubTotal=@SubTotal, TaxTotal=@TaxTotal, ShippingTotal=@ShippingTotal, DiscountTotal=@DiscountTotal, DiscountPercent=@DiscountPercent, WeightTotal=@WeightTotal, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy where OrderID=" + exl_dr[0].ToString());
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = sqlconn;
+                    cmd.Connection = Conn;
                     //Values into parameters
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
@@ -305,7 +303,6 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    sqlconn.Open();
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
 
@@ -313,10 +310,9 @@ namespace ClassLibrary1
                 else
                 {
                     //Insertion
-                    sqlconn = new SqlConnection(ssqlconnectionstring);
                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrdersCopy] values (@OrderID, @CustomerID, @OrderStatusID, @OrderDate, @CurrencyCode, @WarehouseID, @ShipMethodID, @OrderTypeID, @PriceTypeID, @FirstName, @MiddleName, @LastName, @NameSuffix, @Company, @Address1, @Address2, @Address3, @City, @State, @Zip, @Country, @County, @Email, @Phone, @Notes, @Total, @SubTotal, @TaxTotal, @ShippingTotal, @DiscountTotal, @DiscountPercent, @WeightTotal, @CreatedDate, @ModifiedDate, @CreatedBy, @ModifiedBy)");
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = sqlconn;
+                    cmd.Connection = Conn;
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[2].ToString()));
@@ -353,11 +349,10 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    sqlconn.Open();
+
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
                 }
-                sqlconn.Close();
             }
         }
         public void order_status()
@@ -367,8 +362,7 @@ namespace ClassLibrary1
             do
             {
                 Console.WriteLine("1)Enter Status\n");
-                Console.WriteLine("2)View Status\n");
-                Console.WriteLine("3)Exit\n");
+                Console.WriteLine("2)View Status Table\n");
                 int value = Convert.ToInt32(Console.ReadLine());
 
                 if (value == 1)
@@ -387,7 +381,7 @@ namespace ClassLibrary1
                         Console.WriteLine("Record Already Available");
                     }
                     else
-                    {
+                    {                    
                         Console.WriteLine("Enter Your name");
                         string CreatedBy = Console.ReadLine();
                         SqlCommand cmd = new SqlCommand("INSERT INTO OrderStatuses(OrderStatusDescription,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES('" + status.ToLower() + "','" + DateTime.Now + "','" + DateTime.Now + "','" + CreatedBy + "','" + CreatedBy + "')", Conn);
@@ -407,18 +401,20 @@ namespace ClassLibrary1
                     }
                     else
                     {
+                        //Funtion to display Orderstatuses table
                         SqlDataReader reader = com.ExecuteReader();
 
                         while (reader.Read())
                         {
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
-
                                 Console.Write(reader.GetValue(i) + "\t");
                             }
                             Console.WriteLine("\n");
                         }
                         reader.Close();
+
+                        //Function to delete a RECORD FROM Orderstatuses table
                         Console.WriteLine("Do you want to delete any record Y/N");
                         string delete = Console.ReadLine();
                         if (delete.ToLower() == "y")
