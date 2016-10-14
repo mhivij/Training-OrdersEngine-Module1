@@ -33,5 +33,44 @@ namespace Training_Orders_Engine.Properties {
                 return ((string)(this["ConnStr"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\\\cygrp-adc1\\Dot Net Training\\Custo" +
+            "mer")]
+        public string CustconnStr {
+            get {
+                return ((string)(this["CustconnStr"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\\\cygrp-adc1\\Dot Net Training\\Order" +
+            "Table")]
+        public string OrderconnStr {
+            get {
+                return ((string)(this["OrderconnStr"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\\\cygrp-adc1\\Dot Net Training\\Order" +
+            "History ")]
+        public string OrderHconnStr {
+            get {
+                return ((string)(this["OrderHconnStr"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Extended Properties=\'Excel 12.0;hdr=yes;\' ")]
+        public string ExProp {
+            get {
+                return ((string)(this["ExProp"]));
+            }
+        }
     }
 }
