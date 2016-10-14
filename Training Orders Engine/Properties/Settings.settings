@@ -10,5 +10,17 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source="CYG155\SQLEXPRESS, 49170";Initial Catalog="Training Orders Engine Sandbox";Persist Security Info=True;User ID=sa;Password=P@ssw0rd</Value>
     </Setting>
+    <Setting Name="CustconnStr" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\siddharth.bhatnagar\Desktop\Customer</Value>
+    </Setting>
+    <Setting Name="OrderconnStr" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\siddharth.bhatnagar\Desktop\Orders</Value>
+    </Setting>
+    <Setting Name="OrderHconnStr" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\siddharth.bhatnagar\Desktop\OrderHistory</Value>
+    </Setting>
+    <Setting Name="ExProp" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Extended Properties='Excel 12.0;hdr=yes;'</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
