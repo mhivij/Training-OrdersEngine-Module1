@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Data;
+using System.Configuration;
 
 namespace ClassLibrary1
 {
     public class Class1
     {
+        List<string> Orders_ColName = new List<string>();
+        
         const string sexcelconnectionstring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=No'";
         const string ssqlconnectionstring = "Data Source=CYG155\\SQLEXPRESS;Initial Catalog = Training Orders Engine Sandbox;Integrated Security=SSPI;";
         DataTable DtExcelData;
@@ -25,7 +28,7 @@ namespace ClassLibrary1
             Conn.Open();
             Console.WriteLine("Connection successfull");
 
-        DtExcelData = new DataTable();
+            DtExcelData = new DataTable();
             DtSqlData = new DataTable();
 
             string Exfilepath = @"";    //Put your Excel file path here
@@ -236,8 +239,9 @@ namespace ClassLibrary1
  
         public void orders()
         {
+            
             Boolean flag = true;
-            OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
+            OleDbConnection exlconn = new OleDbConnection(ConfigurationManager.AppSettings["ExlConnStr_K"]);        //to be changed
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
@@ -261,6 +265,9 @@ namespace ClassLibrary1
                     }
                 }
                 Conn.Close();
+                Orders_ColName.Add("OrderID");
+                Orders_ColName.Add("CustomerID");
+
                 if (flag == true)
                 {
                     //Updation
@@ -363,7 +370,7 @@ namespace ClassLibrary1
         public void order_status()
         {
             int flag = 0;
-            OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderStatus.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
+            OleDbConnection exlconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\cygrp-adc1\Dot Net Training\OrderStatus.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
@@ -423,15 +430,97 @@ namespace ClassLibrary1
                 sqlconn.Close();
             }
         }
+        public void order_history()
+        {
+            Boolean flag = false;
+            OleDbConnection exlconn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderHistory.xlsx;Extended Properties='Excel 12.0;HDR=Yes'");        //to be changed
+            OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
+            exlconn.Open();
+            OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
+            while (exl_dr.Read())
+            {
+                SqlConnection Conn = new SqlConnection(ssqlconnectionstring);
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
+                Conn.Open();
+                SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
+                while (sql_dr.Read())
+                {
+                    if (sql_dr[1].ToString() == exl_dr[0].ToString())
+                    {
+                        flag = true;
+                        break;
+                    }
+                    else
+                    {
+                        flag = false;
+                    }
+                }
+                Conn.Close();
+                if (flag)
+                {
+                    Conn = new SqlConnection(ssqlconnectionstring);     //changes to be made
+                    SqlCommand cmd = new SqlCommand("update [dbo].[OrderHistory] set OrderID=@OrderID, OrderStatusID=@OrderStatusID, CreatedDate=@CreatedDate, CreatedBy=@CreatedBy where OrderID="+exl_dr[0].ToString());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = Conn;
+                    cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
+                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
+                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
+                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
+                    Conn.Open();
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("OrderID: " + exl_dr[0] + "Updated");
+                }
+                else
+                {
+                    Conn = new SqlConnection(ssqlconnectionstring);     //changes to be made
+                    SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderHistory] values (@OrderID, @OrderStatusID, @CreatedDate, @CreatedBy)");
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = Conn;
+                    cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
+                    cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
+                    cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
+                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
+                    Conn.Open();
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
+                }
+                Conn.Close();
+            }
+
+            //Fetching OrderStatusDescription for OrderStatusTable
+            SqlConnection Conn_OH = new SqlConnection(ssqlconnectionstring);
+            SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn_OH);
+            Conn_OH.Open();
+            SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader();
+            while (sql_dr_OH.Read())
+            {
+                SqlConnection Conn_OS = new SqlConnection(ssqlconnectionstring);
+                SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn_OS);
+                Conn_OS.Open();
+                SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
+                while (sql_dr_OS.Read())
+                {
+                    if (sql_dr_OH[2] == sql_dr_OS[0])
+                    {
+                        Console.WriteLine(sql_dr_OS[0].ToString());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid OrderStatusID");
+                    }
+                }
+            }
+
+        }
         public static void Main(string[] args)
         {
             Class1 obj = new Class1();
-        obj.importdatafromexcel();           
+            //obj.importdatafromexcel();           
             char choice;
             int option;     
             do
             {
-                Console.WriteLine("Choose the operation you wanna do:\n1.Customer\n2.Order\n3.Order Status");
+                Console.WriteLine("Choose the operation you want to do:\n1.Customer\n2.Order\n3.Order Status\n4.Order History");
                 option = Convert.ToInt32((Console.ReadLine()));
                 if (option == 1)
                 {
@@ -445,6 +534,10 @@ namespace ClassLibrary1
                 {
                     obj.order_status();
                 }
+                else if (option == 4)
+                {
+                    obj.order_history();
+                }
                 else
                 {
                     Console.WriteLine("Invalid Input");
@@ -452,6 +545,7 @@ namespace ClassLibrary1
                 }
                 Console.Write("Do you wish to continue: ");
                 choice = Console.ReadKey().KeyChar;
+                Console.WriteLine();
 
             } while (choice == 'Y' || choice == 'y');
 
