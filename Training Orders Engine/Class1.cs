@@ -25,12 +25,12 @@ namespace ClassLibrary1
             Conn.Open();
             Console.WriteLine("Connection successfull");
 
-        DtExcelData = new DataTable();
+            DtExcelData = new DataTable();
             DtSqlData = new DataTable();
 
-            string Exfilepath = @"";    //Put your Excel file path here
-           //If you MS Excel 2007 then use below lin instead of above line
-           ExcelConn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + Exfilepath + "';Extended Properties='Excel 12.0;hdr=yes;'");
+            string Exfilepath = @"C:\Users\siddharth.bhatnagar\Desktop\Customer.xlsx";
+            //If you MS Excel 2007 then use below lin instead of above line
+            ExcelConn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + Exfilepath + "';Extended Properties='Excel 12.0;hdr=yes;'");
 
             DaExcelcmd = new OleDbDataAdapter("select * from [Sheet1$]", ExcelConn);
             ExcelConn.Open();
@@ -78,47 +78,48 @@ namespace ClassLibrary1
         public void readFromExcel()
         {
             //Creating connection strings
-          /*  string conString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;" + "Extended Properties='Excel 8.0;HDR=Yes;'";
-            OleDbConnection conn = new OleDbConnection(conString);
-            int col_count = 0;
-            OleDbCommand command_reader = new OleDbCommand("select * from [sheet1$]", conn);
-            conn.Open();
-            OleDbDataReader dr_count = command_reader.ExecuteReader();
-            int i = 0;
-            //Counting Column from the Excel Sheet
-            try
-            {
-                while (dr_count.Read())
-                {
-                    while (true)
-                    {
-                        var rowcol = dr_count[i];
-                        i++;
-                    }
-                }
-            }
-            catch (IndexOutOfRangeException e)
-            {
-                Console.WriteLine("Count = " + i);
-                col_count = i;
-            }
-            dr_count.Close();
-            //Displaying table data on the console
-            OleDbDataReader dr = command_reader.ExecuteReader();
-            while (dr.Read())
-            {
-                for (i = 0; i < col_count; i++)
-                {
-                    var rowcol = dr[i];
-                    Console.Write(rowcol + "\t");
-                }
-                Console.Write("\n");
-            }
-            conn.Close();*/
+            /*  string conString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;" + "Extended Properties='Excel 8.0;HDR=Yes;'";
+              OleDbConnection conn = new OleDbConnection(conString);
+              int col_count = 0;
+              OleDbCommand command_reader = new OleDbCommand("select * from [sheet1$]", conn);
+              conn.Open();
+              OleDbDataReader dr_count = command_reader.ExecuteReader();
+              int i = 0;
+              //Counting Column from the Excel Sheet
+              try
+              {
+                  while (dr_count.Read())
+                  {
+                      while (true)
+                      {
+                          var rowcol = dr_count[i];
+                          i++;
+                      }
+                  }
+              }
+              catch (IndexOutOfRangeException e)
+              {
+                  Console.WriteLine("Count = " + i);
+                  col_count = i;
+              }
+              dr_count.Close();
+              //Displaying table data on the console
+              OleDbDataReader dr = command_reader.ExecuteReader();
+              while (dr.Read())
+              {
+                  for (i = 0; i < col_count; i++)
+                  {
+                      var rowcol = dr[i];
+                      Console.Write(rowcol + "\t");
+                  }
+                  Console.Write("\n");
+              }
+              conn.Close();*/
         }
-        
+
         public void customers()
         {
+
             int sqlrow = DtSqlData.Rows.Count;
             bool Flag = false;
             int excelrow = DtExcelData.Rows.Count;
@@ -140,7 +141,7 @@ namespace ClassLibrary1
                 }
                 if (Flag)
                 {
-                    SqlCommand cmd = new SqlCommand("UPDATE Customer SET FirstName=@FirstName,MiddleName=@MiddleName, LastName=@LastName, Company=@Company, CustomerTypeID=@CustomerTypeID, CustomerStatusID=@CustomerStatusID, Email=@Email, Phone=@Phone, MainAddress1=@MainAddress1, MainAddress2=@MainAddress2, MainAddress3=@MainAddress3, MainCity=@MainCity, MainState=@MainState, MainZip=@MainZip, MainCountry=@MainCountry, MailAddress1=@MailAddress1, MailAddress2=@MailAddress2, MailAddress3=@MailAddress3, MailCity=@MailCity, MailState=@MailState, MailZip=@MailZip, MailCountry=@MailCountry,CanLogin=@CanLogin, LoginName=@LoginName, BirthDate=@BirthDate, CurrencyCode=@CurrencyCode, LanguageID=@LanguageID, Gender=@Gender, TaxCode=@TaxCode, TaxCodeTypeID=@TaxCodeTypeID, IsSalesTaxExempt=@IsSalesTaxExempt, SalesTaxCode=@SalesTaxCode, IsEmailSubscribed=@IsEmailSubscribed, Notes=@Notes, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy WHERE CustomerID=@CustomerID",Conn);
+                    SqlCommand cmd = new SqlCommand("UPDATE Customer SET FirstName=@FirstName,MiddleName=@MiddleName, LastName=@LastName, Company=@Company, CustomerTypeID=@CustomerTypeID, CustomerStatusID=@CustomerStatusID, Email=@Email, Phone=@Phone, MainAddress1=@MainAddress1, MainAddress2=@MainAddress2, MainAddress3=@MainAddress3, MainCity=@MainCity, MainState=@MainState, MainZip=@MainZip, MainCountry=@MainCountry, MailAddress1=@MailAddress1, MailAddress2=@MailAddress2, MailAddress3=@MailAddress3, MailCity=@MailCity, MailState=@MailState, MailZip=@MailZip, MailCountry=@MailCountry,CanLogin=@CanLogin, LoginName=@LoginName, BirthDate=@BirthDate, CurrencyCode=@CurrencyCode, LanguageID=@LanguageID, Gender=@Gender, TaxCode=@TaxCode, TaxCodeTypeID=@TaxCodeTypeID, IsSalesTaxExempt=@IsSalesTaxExempt, SalesTaxCode=@SalesTaxCode, IsEmailSubscribed=@IsEmailSubscribed, Notes=@Notes, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy WHERE CustomerID=@CustomerID", Conn);
                     cmd.Parameters.Add("@CustomerID", SqlDbType.Int).Value = DtExcelData.Rows[i][0];
                     cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
                     cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
@@ -188,7 +189,7 @@ namespace ClassLibrary1
                     //sqlBulkCopy.DestinationTableName = "dbo.Customer";
                     //sqlBulkCopy.WriteToServer(DtExcelData.Rows[i].Table);
 
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Customer(FirstName,MiddleName,LastName,Company,CustomerTypeID,CustomerStatusID, Email, Phone, MainAddress1, MainAddress2, MainAddress3, MainCity, MainState, MainZip, MainCountry, MailAddress1, MailAddress2, MailAddress3, MailCity, MailState, MailZip, MailCountry,CanLogin,LoginName,BirthDate,CurrencyCode,LanguageID,Gender,TaxCode,TaxCodeTypeID,IsSalesTaxExempt,SalesTaxCode,IsEmailSubscribed,Notes,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES(@FirstName,@MiddleName,@LastName,@Company,@CustomerTypeID,@CustomerStatusID,@Email,@Phone,@MainAddress1,@MainAddress2,@MainAddress3,@MainCity,@MainState,@MainZip,@MainCountry,@MailAddress1,@MailAddress2,@MailAddress3,@MailCity,@MailState,@MailZip,@MailCountry,@CanLogin,@LoginName,@BirthDate,@CurrencyCode,@LanguageID,@Gender,@TaxCode,@TaxCodeTypeID,@IsSalesTaxExempt,@SalesTaxCode,@IsEmailSubscribed,@Notes,@CreatedDate,@ModifiedDate,@CreatedBy,@ModifiedBy)",Conn);
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Customer(FirstName,MiddleName,LastName,Company,CustomerTypeID,CustomerStatusID, Email, Phone, MainAddress1, MainAddress2, MainAddress3, MainCity, MainState, MainZip, MainCountry, MailAddress1, MailAddress2, MailAddress3, MailCity, MailState, MailZip, MailCountry,CanLogin,LoginName,BirthDate,CurrencyCode,LanguageID,Gender,TaxCode,TaxCodeTypeID,IsSalesTaxExempt,SalesTaxCode,IsEmailSubscribed,Notes,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES(@FirstName,@MiddleName,@LastName,@Company,@CustomerTypeID,@CustomerStatusID,@Email,@Phone,@MainAddress1,@MainAddress2,@MainAddress3,@MainCity,@MainState,@MainZip,@MainCountry,@MailAddress1,@MailAddress2,@MailAddress3,@MailCity,@MailState,@MailZip,@MailCountry,@CanLogin,@LoginName,@BirthDate,@CurrencyCode,@LanguageID,@Gender,@TaxCode,@TaxCodeTypeID,@IsSalesTaxExempt,@SalesTaxCode,@IsEmailSubscribed,@Notes,@CreatedDate,@ModifiedDate,@CreatedBy,@ModifiedBy)", Conn);
                     cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
                     cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
                     cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][3].ToString();
@@ -233,20 +234,21 @@ namespace ClassLibrary1
             }
 
         }
- 
+
         public void orders()
         {
             Boolean flag = true;
             OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
+
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
             while (exl_dr.Read())
             {
                 //SQL connection Object here:
-                SqlConnection Conn = new SqlConnection(ssqlconnectionstring);
-                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", Conn);
-                Conn.Open();
+                SqlConnection sqlconn = new SqlConnection(ssqlconnectionstring);
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrdersCopy]", sqlconn);
+                sqlconn.Open();
                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
                 while (sql_dr.Read())
                 {
@@ -260,14 +262,14 @@ namespace ClassLibrary1
                         flag = false;
                     }
                 }
-                Conn.Close();
+                sqlconn.Close();
                 if (flag == true)
                 {
                     //Updation
-                    Conn = new SqlConnection(ssqlconnectionstring);
+                    sqlconn = new SqlConnection(ssqlconnectionstring);
                     SqlCommand cmd = new SqlCommand("Update [dbo].[OrdersCopy] set OrderID=@OrderID, CustomerID=@CustomerID, OrderStatusID=@OrderStatusID, OrderDate=@OrderDate, CurrencyCode=@CurrencyCode, WarehouseID=@WarehouseID, ShipMethodID=@ShipMethodID, OrderTypeID=@OrderTypeID, PriceTypeID=@PriceTypeID, FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, NameSuffix=@NameSuffix, Company=@Company, Address1=@Address1, Address2=@Address2, Address3=@Address3, City=@City, State=@State, Zip=@Zip, Country=@Country, County=@County, Email=@Email, Phone=@Phone, Notes=@Notes, Total=@Total, SubTotal=@SubTotal, TaxTotal=@TaxTotal, ShippingTotal=@ShippingTotal, DiscountTotal=@DiscountTotal, DiscountPercent=@DiscountPercent, WeightTotal=@WeightTotal, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy where OrderID=" + exl_dr[0].ToString());
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = Conn;
+                    cmd.Connection = sqlconn;
                     //Values into parameters
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
@@ -305,7 +307,7 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    Conn.Open();
+                    sqlconn.Open();
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
 
@@ -313,10 +315,10 @@ namespace ClassLibrary1
                 else
                 {
                     //Insertion
-                    Conn = new SqlConnection(ssqlconnectionstring);
+                    sqlconn = new SqlConnection(ssqlconnectionstring);
                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrdersCopy] values (@OrderID, @CustomerID, @OrderStatusID, @OrderDate, @CurrencyCode, @WarehouseID, @ShipMethodID, @OrderTypeID, @PriceTypeID, @FirstName, @MiddleName, @LastName, @NameSuffix, @Company, @Address1, @Address2, @Address3, @City, @State, @Zip, @Country, @County, @Email, @Phone, @Notes, @Total, @SubTotal, @TaxTotal, @ShippingTotal, @DiscountTotal, @DiscountPercent, @WeightTotal, @CreatedDate, @ModifiedDate, @CreatedBy, @ModifiedBy)");
                     cmd.CommandType = CommandType.Text;
-                    cmd.Connection = Conn;
+                    cmd.Connection = sqlconn;
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@CustomerID", Int32.Parse(exl_dr[1].ToString()));
                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[2].ToString()));
@@ -353,11 +355,11 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-                    Conn.Open();
+                    sqlconn.Open();
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
                 }
-                Conn.Close();
+                sqlconn.Close();
             }
         }
         public void order_status()
@@ -394,7 +396,7 @@ namespace ClassLibrary1
                     }
                 }
                 sqlconn.Close();
-                if (flag==1)
+                if (flag == 1)
                 {
                     //Updating record w/o overwriting existing OrderID
                     sqlconn = new SqlConnection(ssqlconnectionstring);
@@ -407,7 +409,7 @@ namespace ClassLibrary1
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
                 }
-                else if (flag==2)
+                else if (flag == 2)
                 {
                     //Inserting new OrderID
                     sqlconn = new SqlConnection(ssqlconnectionstring);
@@ -426,9 +428,9 @@ namespace ClassLibrary1
         public static void Main(string[] args)
         {
             Class1 obj = new Class1();
-        obj.importdatafromexcel();           
+            obj.importdatafromexcel();
             char choice;
-            int option;     
+            int option;
             do
             {
                 Console.WriteLine("Choose the operation you wanna do:\n1.Customer\n2.Order\n3.Order Status");
