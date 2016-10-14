@@ -371,7 +371,7 @@ namespace ClassLibrary1
                     string status = Console.ReadLine().ToLower();
                     Console.WriteLine("");
 
-                    SqlCommand com = new SqlCommand("select OrderStatusDescription from OrderStatuses where OrderStatusDescription='" + status+ "'", Conn);
+                    SqlCommand com = new SqlCommand("select OrderStatusDescription from OrderStatuses where OrderStatusDescription='" + status + "'", Conn);
                     com.CommandType = CommandType.Text;
                     SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
                     DaSqlcmd.Fill(DtSqlData);
@@ -381,7 +381,7 @@ namespace ClassLibrary1
                         Console.WriteLine("Record Already Available");
                     }
                     else
-                    {                    
+                    {
                         Console.WriteLine("Enter Your name");
                         string CreatedBy = Console.ReadLine();
                         SqlCommand cmd = new SqlCommand("INSERT INTO OrderStatuses(OrderStatusDescription,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES('" + status.ToLower() + "','" + DateTime.Now + "','" + DateTime.Now + "','" + CreatedBy + "','" + CreatedBy + "')", Conn);
@@ -428,73 +428,15 @@ namespace ClassLibrary1
                         }
                     }
                 }
+                else
+                {
+                    Console.WriteLine("Wrong option");
+                }
                 Console.WriteLine("Do you want to continue:");
                 allow=Console.ReadLine();
                 Console.WriteLine();
             } while (allow.ToLower() == "y");
 
-
-
-            /* int flag = 0;
-             OleDbConnection exlconn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderStatus.xlsx;Extended Properties='Excel 8.0;HDR=Yes'");
-             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
-             exlconn.Open();
-             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
-             while (exl_dr.Read())
-             {
-                 //SQL connection Object here:
-                 SqlConnection sqlconn = new SqlConnection(ssqlconnectionstring);
-                 SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderStatus]", sqlconn);
-                 sqlconn.Open();
-                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
-                 while (sql_dr.Read())
-                 {
-                     if (sql_dr[0].ToString() == exl_dr[0].ToString())
-                     {
-                         if (sql_dr[1].ToString() != exl_dr[1].ToString())
-                         {
-                             flag = 1;
-                         }
-                         else
-                         {
-                             flag = 0;
-                         }
-                         break;
-                     }
-                     else
-                     {
-                         flag = 2;
-                     }
-                 }
-                 sqlconn.Close();
-                 if (flag == 1)
-                 {
-                     //Updating record w/o overwriting existing OrderID
-                     sqlconn = new SqlConnection(ssqlconnectionstring);
-                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderStatus] values (@OrderID, @OrderStatusID)");
-                     cmd.CommandType = CommandType.Text;
-                     cmd.Connection = sqlconn;
-                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
-                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
-                     sqlconn.Open();
-                     cmd.ExecuteNonQuery();
-                     Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
-                 }
-                 else if (flag == 2)
-                 {
-                     //Inserting new OrderID
-                     sqlconn = new SqlConnection(ssqlconnectionstring);
-                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderStatus] values (@OrderID, @OrderStatusID)");
-                     cmd.CommandType = CommandType.Text;
-                     cmd.Connection = sqlconn;
-                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
-                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
-                     sqlconn.Open();
-                     cmd.ExecuteNonQuery();
-                     Console.WriteLine("OrderID: " + exl_dr[0] + " Inserted");
-                 }
-                 sqlconn.Close();
-             }*/
         }
         public static void Main(string[] args)
         {
