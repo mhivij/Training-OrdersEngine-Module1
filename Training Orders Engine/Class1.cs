@@ -377,7 +377,7 @@ namespace ClassLibrary1
                         SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
                         DaSqlcmd.Fill(DtSqlData);
 
-                        if (DtSqlData.Rows.Count > 0)
+                        if (DtSqlData.Rows.Count > 1)
                         {
                             Console.WriteLine("Record Already Available");
                         }
