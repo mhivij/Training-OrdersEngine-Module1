@@ -57,7 +57,7 @@ namespace Training_Orders_Engine.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\\\cygrp-adc1\\Dot Net Training\\Order" +
-            "History ")]
+            "History")]
         public string OrderHconnStr {
             get {
                 return ((string)(this["OrderHconnStr"]));

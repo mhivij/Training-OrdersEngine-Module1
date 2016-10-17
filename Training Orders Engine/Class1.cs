@@ -61,7 +61,7 @@ namespace ClassLibrary1
             }*/
 
         }
-        public void readFromExcel()
+        public void readFromExcel()                 //obsolete
         {
             //Creating connection strings
             /*  string conString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Users\\kapil.sharma\\Desktop\\OrderTable.xlsx;" + "Extended Properties='Excel 8.0;HDR=Yes;'";
@@ -230,7 +230,6 @@ namespace ClassLibrary1
             }
 
         }
-
         public void orders()
         {
             Boolean flag = true;
@@ -349,7 +348,6 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@ModifiedDate", exl_dr[33].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[34].ToString());
                     cmd.Parameters.AddWithValue("@ModifiedBy", exl_dr[35].ToString());
-
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
                 }
@@ -441,7 +439,7 @@ namespace ClassLibrary1
         public void order_history()
         {
             Boolean flag = false;
-            OleDbConnection exlconn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderHistory.xlsx;Extended Properties='Excel 12.0;HDR=Yes'");        //to be changed
+            OleDbConnection exlconn = new OleDbConnection(Training_Orders_Engine.Properties.Settings.Default.OrderHconnStr + ".xlsx" + ";" + Training_Orders_Engine.Properties.Settings.Default.ExProp);        //to be changed
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
@@ -473,8 +471,7 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@OrderID", Int32.Parse(exl_dr[0].ToString()));
                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
                     cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
-                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
-                   
+                    cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());                
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Updated");
                 }
@@ -491,73 +488,79 @@ namespace ClassLibrary1
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
                 }
-                //Conn.Close();
             }
+            //Fetching OrderStatusDescription for OrderStatusTable
+            SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
+            SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader(); 
+            while (sql_dr_OH.Read())
+            {
+                SqlConnection Conn_OS = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);          //seperate SQL connenction required for second Data reader object
+                SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn_OS);
+                Conn_OS.Open();
 
-            ////Fetching OrderStatusDescription for OrderStatusTable
-
-            //SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
-         
-            //SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader();
-            //while (sql_dr_OH.Read())
-            //{
-   
-            //    SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn);
-               
-            //    SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
-            //    while (sql_dr_OS.Read())
-            //    {
-            //        if (sql_dr_OH[2] == sql_dr_OS[0])
-            //        {
-            //            Console.WriteLine(sql_dr_OS[0].ToString());
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine("Invalid OrderStatusID");
-            //        }
-            //    }
-            //}
-
-
-            //sql_dr_OH.Close();
+                SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
+                while (sql_dr_OS.Read())
+                {
+                    if (sql_dr_OH[2] == sql_dr_OS[0])
+                    {
+                        Console.WriteLine(sql_dr_OS[0].ToString());
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid OrderStatusID");
+                        break;
+                    }
+                }
+                sql_dr_OS.Close();
+            }
+            sql_dr_OH.Close();
         }
         
         public static void Main(string[] args)
         {
             Class1 obj = new Class1();
             obj.importdatafromexcel();
-            char choice;
+            char choice = 'y';
             int option;
             do
             {
-                Console.WriteLine("Choose the operation you wanna do:\n1.Customer\n2.Order\n3.Order Status\n4. Order History");
-                option = Convert.ToInt32((Console.ReadLine()));
-                if (option == 1)
+                try
                 {
-                    obj.customers();
-                }
-                else if (option == 2)
+                    Console.WriteLine("\nChoose the operation you want to do:\n1.Customer\n2.Order\n3.Order Status\n4.Order History");
+                    option = Convert.ToInt32((Console.ReadLine()));
+                    if (option == 1)
+                    {
+                        obj.customers();
+                    }
+                    else if (option == 2)
+                    {
+                        obj.orders();
+                    }
+                    else if (option == 3)
+                    {
+                        obj.order_status();
+                    }
+                    else if (option == 4)
+                    {
+                        obj.order_history();
+                    }
+                    else
+                    {                           
+                            Console.WriteLine("Invalid Input (Valid entries: 1 - 4)");
+                    }
+                }catch (FormatException e)
                 {
-                    obj.orders();
+                    Console.WriteLine("Please enter numeric values only");
                 }
-                else if (option == 3)
-                {
-                    obj.order_status();
-                }
-                else if (option == 4)
-                {
-                    obj.order_history();
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Input");
-                    break;
-                }
-                Console.Write("Do you wish to continue: ");
+                Console.Write("Do you wish to continue (Y/N): ");
                 choice = Console.ReadKey().KeyChar;
-
+                while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n')
+                {
+                    Console.Write("\nInvalid Input (Valid entries: Y or N). Please enter again: ");
+                    choice = Console.ReadKey().KeyChar;
+                }
             } while (choice == 'Y' || choice == 'y');
-
             Console.ReadLine();
         }
 

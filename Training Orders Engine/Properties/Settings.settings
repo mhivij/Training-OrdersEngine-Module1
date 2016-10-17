@@ -17,7 +17,7 @@
       <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderTable</Value>
     </Setting>
     <Setting Name="OrderHconnStr" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderHistory </Value>
+      <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\cygrp-adc1\Dot Net Training\OrderHistory</Value>
     </Setting>
     <Setting Name="ExProp" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Extended Properties='Excel 12.0;hdr=yes;' </Value>
