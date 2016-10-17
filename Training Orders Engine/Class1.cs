@@ -356,85 +356,110 @@ namespace ClassLibrary1
         public void order_status()
         {
 
-            string allow=null;
+            string allow = null;
             do
             {
                 Console.WriteLine("1)Enter Status\n");
                 Console.WriteLine("2)View Status Table\n");
-                int value = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("3)Exit\n");
 
-                if (value == 1)
+                try
                 {
-                    Console.WriteLine("Enter OrderStatus\n");
-                    string status = Console.ReadLine().ToLower();
-                    Console.WriteLine("");
-
-                    SqlCommand com = new SqlCommand("select OrderStatusDescription from OrderStatuses where OrderStatusDescription='" + status + "'", Conn);
-                    com.CommandType = CommandType.Text;
-                    SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
-                    DaSqlcmd.Fill(DtSqlData);
-
-                    if (DtSqlData.Rows.Count > 0)
+                    int value = Convert.ToInt32(Console.ReadLine());
+                    if (value == 1)
                     {
-                        Console.WriteLine("Record Already Available");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Enter Your name");
-                        string CreatedBy = Console.ReadLine();
-                        SqlCommand cmd = new SqlCommand("INSERT INTO OrderStatuses(OrderStatusDescription,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES('" + status.ToLower() + "','" + DateTime.Now + "','" + DateTime.Now + "','" + CreatedBy + "','" + CreatedBy + "')", Conn);
-                        cmd.ExecuteNonQuery();
-                        Console.WriteLine("Record Inserted\n");
-                    }
+                        Console.WriteLine("Enter OrderStatus\n");
+                        string status = Console.ReadLine().ToLower();
+                        Console.WriteLine("");
 
-                }
-                else if (value == 2)
-                {
-                    SqlCommand com = new SqlCommand("SELECT * FROM OrderStatuses", Conn);
-                    SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
-                    DaSqlcmd.Fill(DtSqlData);
-                    if (DtSqlData.Rows.Count == 0)
-                    {
-                        Console.WriteLine(" No Record Available");
-                    }
-                    else
-                    {
-                        //Funtion to display Orderstatuses table
-                        SqlDataReader reader = com.ExecuteReader();
+                        SqlCommand com = new SqlCommand("select OrderStatusDescription from OrderStatuses where OrderStatusDescription='" + status + "'", Conn);
+                        com.CommandType = CommandType.Text;
+                        SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
+                        DaSqlcmd.Fill(DtSqlData);
 
-                        while (reader.Read())
+                        if (DtSqlData.Rows.Count > 0)
                         {
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                Console.Write(reader.GetValue(i) + "\t");
-                            }
-                            Console.WriteLine("\n");
+                            Console.WriteLine("Record Already Available");
                         }
-                        reader.Close();
-
-                        //Function to delete a RECORD FROM Orderstatuses table
-                        Console.WriteLine("Do you want to delete any record Y/N");
-                        string delete = Console.ReadLine();
-                        if (delete.ToLower() == "y")
+                        else
                         {
-                            Console.WriteLine("Enter Status id of the record you want to delete");
-                            int Statusid = Convert.ToInt32(Console.ReadLine());
-                            SqlCommand cmd = new SqlCommand("DELETE FROM OrderStatuses WHERE OrderStatusID='" + Statusid + "'", Conn);
+                            Console.WriteLine("Enter Your name");
+                            string CreatedBy = Console.ReadLine();
+                            SqlCommand cmd = new SqlCommand("INSERT INTO OrderStatuses(OrderStatusDescription,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES('" + status.ToLower() + "','" + DateTime.Now + "','" + DateTime.Now + "','" + CreatedBy + "','" + CreatedBy + "')", Conn);
                             cmd.ExecuteNonQuery();
-                            Console.WriteLine("Record Deleted:" + Statusid);
+                            Console.WriteLine("Record Inserted\n");
+                        }
 
+                    }
+                    else if (value == 2)
+                    {
+                        SqlCommand com = new SqlCommand("SELECT * FROM OrderStatuses", Conn);
+                        SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
+                        DaSqlcmd.Fill(DtSqlData);
+                        if (DtSqlData.Rows.Count == 0)
+                        {
+                            Console.WriteLine(" No Record Available");
+                        }
+                        else
+                        {
+                            //Funtion to display Orderstatuses table
+                            SqlDataReader reader = com.ExecuteReader();
+
+                            while (reader.Read())
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    Console.Write(reader.GetValue(i) + "\t");
+                                }
+                                Console.WriteLine("\n");
+                            }
+                            reader.Close();
+
+                            //Function to delete a RECORD FROM Orderstatuses table
+                            Console.WriteLine("Do you want to delete any record Y/N");
+                            string delete = Console.ReadLine().ToLower();
+                            Console.WriteLine();
+                            while(delete !="y" && delete !="n")
+                            {
+                                Console.WriteLine("Wrong input Enter Y OR N only,Enter again");                             
+                                delete = Console.ReadLine().ToLower();
+                            }
+                            if (delete.ToLower() == "y")
+                            {
+                                Console.WriteLine("Enter Status id of the record you want to delete");
+                                int Statusid = Convert.ToInt32(Console.ReadLine());
+                                SqlCommand cmd = new SqlCommand("DELETE FROM OrderStatuses WHERE OrderStatusID='" + Statusid + "'", Conn);
+                                cmd.ExecuteNonQuery();
+                                Console.WriteLine("Record Deleted:" + Statusid);
+
+                            }
                         }
                     }
+                    else if (value == 3)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Wrong option");
+                    }
                 }
-                else
+                catch
                 {
-                    Console.WriteLine("Wrong option");
+                    Console.WriteLine("Wrong input, Enter Correct option\n ");
                 }
-                Console.WriteLine("Do you want to continue:");
-                allow=Console.ReadLine();
+                Console.WriteLine("Do you want to go back to Order Status menu:");
+                allow = Console.ReadLine().ToLower();
                 Console.WriteLine();
+                while (allow !="y" && allow !="n")
+                {
+                    Console.WriteLine("Wrong input Enter Y OR N only,Enter again\n");
+                    Console.WriteLine("Do you want to go back to Order Status menu:");
+                    allow = Console.ReadLine().ToLower();
+                    Console.WriteLine();
+                }
+                
             } while (allow.ToLower() == "y");
-
         }
         public void order_history()
         {
