@@ -23,42 +23,8 @@ namespace ClassLibrary1
         {
             Conn = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);
             Conn.Open();
-            Console.WriteLine("Connection successfull");
-
             DtExcelData = new DataTable();
             DtSqlData = new DataTable();
-            /*string ssqltable = "OrdersCopy";
-            string myexceldataquery = "select * from [sheet1$]";
-            try
-            {
-                //create our connection strings       
-                //execute a query to erase any previous data from our destination table
-                string sclearsql = "delete from " + ssqltable;
-                SqlConnection sqlconn = new SqlConnection(ssqlconnectionstring);
-                SqlCommand sqlcmd = new SqlCommand(sclearsql, sqlconn);
-                sqlconn.Open();
-                sqlcmd.ExecuteNonQuery();
-                sqlconn.Close();
-                Console.WriteLine("Connection Successfull");
-                //series of commands to bulk copy data from the excel file into our sql table
-                OleDbConnection oledbconn = new OleDbConnection(sexcelconnectionstring);
-                OleDbCommand oledbcmd = new OleDbCommand(myexceldataquery, oledbconn);
-                oledbconn.Open();
-                OleDbDataReader dr = oledbcmd.ExecuteReader();
-                SqlBulkCopy bulkcopy = new SqlBulkCopy(ssqlconnectionstring);
-                bulkcopy.DestinationTableName = ssqltable;
-                while (dr.Read())
-                {
-                    bulkcopy.WriteToServer(dr);
-                }
-
-                oledbconn.Close();
-            }
-            catch (Exception e)
-            {
-                //handle exception
-                Console.WriteLine("Exception Handled\n\n" + e);
-            }*/
 
         }
         public void readFromExcel()                 //obsolete
@@ -182,9 +148,6 @@ namespace ClassLibrary1
                 }
                 else
                 {
-                    //sqlBulkCopy.DestinationTableName = "dbo.Customer";
-                    //sqlBulkCopy.WriteToServer(DtExcelData.Rows[i].Table);
-
                     SqlCommand cmd = new SqlCommand("INSERT INTO Customer(FirstName,MiddleName,LastName,Company,CustomerTypeID,CustomerStatusID, Email, Phone, MainAddress1, MainAddress2, MainAddress3, MainCity, MainState, MainZip, MainCountry, MailAddress1, MailAddress2, MailAddress3, MailCity, MailState, MailZip, MailCountry,CanLogin,LoginName,BirthDate,CurrencyCode,LanguageID,Gender,TaxCode,TaxCodeTypeID,IsSalesTaxExempt,SalesTaxCode,IsEmailSubscribed,Notes,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES(@FirstName,@MiddleName,@LastName,@Company,@CustomerTypeID,@CustomerStatusID,@Email,@Phone,@MainAddress1,@MainAddress2,@MainAddress3,@MainCity,@MainState,@MainZip,@MainCountry,@MailAddress1,@MailAddress2,@MailAddress3,@MailCity,@MailState,@MailZip,@MailCountry,@CanLogin,@LoginName,@BirthDate,@CurrencyCode,@LanguageID,@Gender,@TaxCode,@TaxCodeTypeID,@IsSalesTaxExempt,@SalesTaxCode,@IsEmailSubscribed,@Notes,@CreatedDate,@ModifiedDate,@CreatedBy,@ModifiedBy)", Conn);
                     cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
                     cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
@@ -366,6 +329,7 @@ namespace ClassLibrary1
                 try
                 {
                     int value = Convert.ToInt32(Console.ReadLine());
+                    DtSqlData = new DataTable();
                     if (value == 1)
                     {
                         Console.WriteLine("Enter OrderStatus\n");
@@ -464,21 +428,39 @@ namespace ClassLibrary1
         public void order_history()
         {
             Boolean flag = false;
+            Boolean upd_flag = false;
             OleDbConnection exlconn = new OleDbConnection(Training_Orders_Engine.Properties.Settings.Default.OrderHconnStr + ".xlsx" + ";" + Training_Orders_Engine.Properties.Settings.Default.ExProp);        //to be changed
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
             while (exl_dr.Read())
             {
-    
-                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
-     
+                flag = false;
+                upd_flag = false;
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn);    
                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
-                
                 while (sql_dr.Read())
                 {
-                    if (sql_dr[1].ToString() == exl_dr[0].ToString())
+                    
+                    if (sql_dr[0].ToString() == exl_dr[1].ToString())           //checks if OrderStatusID has a valid value
                     {
+                        SqlConnection Conn_OH = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);
+                        SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn_OH);
+                        Conn_OH.Open();
+                        SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader();
+                        while (sql_dr_OH.Read())
+                        {
+                            if (exl_dr[0].ToString() == sql_dr_OH[1].ToString())        //checks if OrderID is already present in the db
+                            {
+                                upd_flag = true;
+                                break;
+                            }
+                            else
+                            {
+                                upd_flag = false; 
+                            }
+                        }
+                        sql_dr_OH.Close();
                         flag = true;
                         break;
                     }
@@ -488,7 +470,7 @@ namespace ClassLibrary1
                     }
                 }
                 sql_dr.Close();
-                if (flag)
+                if (upd_flag)
                 {
                     SqlCommand cmd = new SqlCommand("update [dbo].[OrderHistory] set OrderID=@OrderID, OrderStatusID=@OrderStatusID, CreatedDate=@CreatedDate, CreatedBy=@CreatedBy where OrderID=" + exl_dr[0].ToString());
                     cmd.CommandType = CommandType.Text;
@@ -498,9 +480,9 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());                
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("OrderID: " + exl_dr[0] + "Updated");
+                    Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
                 }
-                else
+                else if(flag)
                 {
                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderHistory] values (@OrderID, @OrderStatusID, @CreatedDate, @CreatedBy)");
                     cmd.CommandType = CommandType.Text;
@@ -509,37 +491,14 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
                     cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
-                    Conn.Open();
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
+                    Console.WriteLine("OrderID: " + exl_dr[0] + " Inserted");
                 }
-            }
-            //Fetching OrderStatusDescription for OrderStatusTable
-            SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
-            SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader(); 
-            while (sql_dr_OH.Read())
-            {
-                SqlConnection Conn_OS = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);          //seperate SQL connenction required for second Data reader object
-                SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn_OS);
-                Conn_OS.Open();
-
-                SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
-                while (sql_dr_OS.Read())
+                else
                 {
-                    if (sql_dr_OH[2] == sql_dr_OS[0])
-                    {
-                        Console.WriteLine(sql_dr_OS[0].ToString());
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid OrderStatusID");
-                        break;
-                    }
+                    Console.WriteLine("Invalid OrderStatusID");
                 }
-                sql_dr_OS.Close();
             }
-            sql_dr_OH.Close();
         }
         
         public static void Main(string[] args)
@@ -578,14 +537,14 @@ namespace ClassLibrary1
                 {
                     Console.WriteLine("Please enter numeric values only");
                 }
-                Console.Write("Do you wish to continue (Y/N): ");
+                Console.Write("Do you want to exit application (Y/N): ");
                 choice = Console.ReadKey().KeyChar;
                 while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n')
                 {
                     Console.Write("\nInvalid Input (Valid entries: Y or N). Please enter again: ");
                     choice = Console.ReadKey().KeyChar;
                 }
-            } while (choice == 'Y' || choice == 'y');
+            } while (choice == 'N' || choice == 'n');
             Console.ReadLine();
         }
 
