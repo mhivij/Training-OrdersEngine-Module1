@@ -23,8 +23,6 @@ namespace ClassLibrary1
         {
             Conn = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);
             Conn.Open();
-            Console.WriteLine("Connection successfull");
-
             DtExcelData = new DataTable();
             DtSqlData = new DataTable();
 
@@ -73,131 +71,218 @@ namespace ClassLibrary1
 
         public void customers()
         {
-            SqlCommand com = new SqlCommand("select * from Customer", Conn);
-            com.CommandType = CommandType.Text;
-            SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
-            DaSqlcmd.Fill(DtSqlData);
 
-            string Excelconnstring = Training_Orders_Engine.Properties.Settings.Default.CustconnStr + ".xlsx" + ";" + Training_Orders_Engine.Properties.Settings.Default.ExProp;
-            ExcelConn = new OleDbConnection(Excelconnstring);
-            DaExcelcmd = new OleDbDataAdapter("select * from [Sheet1$]", ExcelConn);
-            ExcelConn.Open();
-            DaExcelcmd.Fill(DtExcelData);
-
-            int sqlrow = DtSqlData.Rows.Count;
-            bool Flag = false;
-            int excelrow = DtExcelData.Rows.Count;
-
-            for (int i = 0; i < excelrow; i++)
+            DtExcelData = new DataTable();
+            DtSqlData = new DataTable();
+            string allow = null;
+            do
             {
-                for (int j = 0; j < sqlrow; j++)
+                DtSqlData = new DataTable();
+                Console.WriteLine("1)Insert/Update Records in Customer table\n");
+                Console.WriteLine("2)View Customer Table\n");
+                Console.WriteLine("3)Exit\n");
+
+                try
                 {
-                    if (DtExcelData.Rows[i][0].ToString() == DtSqlData.Rows[j][0].ToString())
+                    int value = Convert.ToInt32(Console.ReadLine());
+                    if (value == 1)
                     {
-                        Flag = true;
+                        SqlCommand com = new SqlCommand("select * from Customer", Conn);
+                        com.CommandType = CommandType.Text;
+                        SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
+                        DaSqlcmd.Fill(DtSqlData);
+
+                        string Excelconnstring = Training_Orders_Engine.Properties.Settings.Default.CustconnStr + ".xlsx" + ";" + Training_Orders_Engine.Properties.Settings.Default.ExProp;
+                        ExcelConn = new OleDbConnection(Excelconnstring);
+                        DaExcelcmd = new OleDbDataAdapter("select * from [Sheet1$]", ExcelConn);
+                        ExcelConn.Open();
+                        DaExcelcmd.Fill(DtExcelData);
+
+                        int sqlrow = DtSqlData.Rows.Count;
+                        bool Flag = false;
+                        int excelrow = DtExcelData.Rows.Count;
+
+                        for (int i = 0; i < excelrow; i++)
+                        {
+                            for (int j = 0; j < sqlrow; j++)
+                            {
+                                if (DtExcelData.Rows[i][0].ToString() == DtSqlData.Rows[j][0].ToString())
+                                {
+                                    Flag = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    Flag = false;
+                                }
+
+                            }
+                            if (Flag)
+                            {
+                                SqlCommand cmd = new SqlCommand("UPDATE Customer SET FirstName=@FirstName,MiddleName=@MiddleName, LastName=@LastName, Company=@Company, CustomerTypeID=@CustomerTypeID, CustomerStatusID=@CustomerStatusID, Email=@Email, Phone=@Phone, MainAddress1=@MainAddress1, MainAddress2=@MainAddress2, MainAddress3=@MainAddress3, MainCity=@MainCity, MainState=@MainState, MainZip=@MainZip, MainCountry=@MainCountry, MailAddress1=@MailAddress1, MailAddress2=@MailAddress2, MailAddress3=@MailAddress3, MailCity=@MailCity, MailState=@MailState, MailZip=@MailZip, MailCountry=@MailCountry,CanLogin=@CanLogin, LoginName=@LoginName, BirthDate=@BirthDate, CurrencyCode=@CurrencyCode, LanguageID=@LanguageID, Gender=@Gender, TaxCode=@TaxCode, TaxCodeTypeID=@TaxCodeTypeID, IsSalesTaxExempt=@IsSalesTaxExempt, SalesTaxCode=@SalesTaxCode, IsEmailSubscribed=@IsEmailSubscribed, Notes=@Notes, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy WHERE CustomerID=@CustomerID", Conn);
+                                cmd.Parameters.Add("@CustomerID", SqlDbType.Int).Value = DtExcelData.Rows[i][0];
+                                cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
+                                cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
+                                cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][3].ToString();
+                                cmd.Parameters.Add("@Company", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][4].ToString();
+                                cmd.Parameters.Add("@CustomerTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][5];
+                                cmd.Parameters.Add("@CustomerStatusID", SqlDbType.Int).Value = DtExcelData.Rows[i][6];
+                                cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][7].ToString();
+                                cmd.Parameters.Add("@Phone", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][8].ToString();
+                                cmd.Parameters.Add("@MainAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][9].ToString();
+                                cmd.Parameters.Add("@MainAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][10].ToString();
+                                cmd.Parameters.Add("@MainAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][11].ToString();
+                                cmd.Parameters.Add("@MainCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][12].ToString();
+                                cmd.Parameters.Add("@MainState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][13].ToString();
+                                cmd.Parameters.Add("@MainZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][14].ToString();
+                                cmd.Parameters.Add("@MainCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][15].ToString();
+                                cmd.Parameters.Add("@MailAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][16].ToString();
+                                cmd.Parameters.Add("@MailAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][17].ToString();
+                                cmd.Parameters.Add("@MailAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][18].ToString();
+                                cmd.Parameters.Add("@MailCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][19].ToString();
+                                cmd.Parameters.Add("@MailState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][20].ToString();
+                                cmd.Parameters.Add("@MailZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][21].ToString();
+                                cmd.Parameters.Add("@MailCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][22].ToString();
+                                cmd.Parameters.Add("@CanLogin", SqlDbType.Bit).Value = DtExcelData.Rows[i][23];
+                                cmd.Parameters.Add("@LoginName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][24].ToString();
+                                cmd.Parameters.Add("@BirthDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][25];
+                                cmd.Parameters.Add("@CurrencyCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][26].ToString();
+                                cmd.Parameters.Add("@LanguageID", SqlDbType.Int).Value = DtExcelData.Rows[i][27];
+                                cmd.Parameters.Add("@Gender", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][28].ToString();
+                                cmd.Parameters.Add("@TaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][29].ToString();
+                                cmd.Parameters.Add("@TaxCodeTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][30];
+                                cmd.Parameters.Add("@IsSalesTaxExempt", SqlDbType.Bit).Value = DtExcelData.Rows[i][31];
+                                cmd.Parameters.Add("@SalesTaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][32].ToString();
+                                cmd.Parameters.Add("@IsEmailSubscribed", SqlDbType.Bit).Value = DtExcelData.Rows[i][33];
+                                cmd.Parameters.Add("@Notes", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][34].ToString();
+                                cmd.Parameters.Add("@CreatedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][35];
+                                cmd.Parameters.Add("@ModifiedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][36];
+                                cmd.Parameters.Add("@CreatedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][37].ToString();
+                                cmd.Parameters.Add("@ModifiedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][38].ToString();
+                                cmd.ExecuteNonQuery();
+                                Console.WriteLine("Customer id=" + DtExcelData.Rows[i][0].ToString() + " " + " Updated");
+                            }
+                            else
+                            {
+                                //sqlBulkCopy.DestinationTableName = "dbo.Customer";
+                                //sqlBulkCopy.WriteToServer(DtExcelData.Rows[i].Table);
+
+                                SqlCommand cmd = new SqlCommand("INSERT INTO Customer(FirstName,MiddleName,LastName,Company,CustomerTypeID,CustomerStatusID, Email, Phone, MainAddress1, MainAddress2, MainAddress3, MainCity, MainState, MainZip, MainCountry, MailAddress1, MailAddress2, MailAddress3, MailCity, MailState, MailZip, MailCountry,CanLogin,LoginName,BirthDate,CurrencyCode,LanguageID,Gender,TaxCode,TaxCodeTypeID,IsSalesTaxExempt,SalesTaxCode,IsEmailSubscribed,Notes,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES(@FirstName,@MiddleName,@LastName,@Company,@CustomerTypeID,@CustomerStatusID,@Email,@Phone,@MainAddress1,@MainAddress2,@MainAddress3,@MainCity,@MainState,@MainZip,@MainCountry,@MailAddress1,@MailAddress2,@MailAddress3,@MailCity,@MailState,@MailZip,@MailCountry,@CanLogin,@LoginName,@BirthDate,@CurrencyCode,@LanguageID,@Gender,@TaxCode,@TaxCodeTypeID,@IsSalesTaxExempt,@SalesTaxCode,@IsEmailSubscribed,@Notes,@CreatedDate,@ModifiedDate,@CreatedBy,@ModifiedBy)", Conn);
+                                cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
+                                cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
+                                cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][3].ToString();
+                                cmd.Parameters.Add("@Company", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][4].ToString();
+                                cmd.Parameters.Add("@CustomerTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][5];
+                                cmd.Parameters.Add("@CustomerStatusID", SqlDbType.Int).Value = DtExcelData.Rows[i][6];
+                                cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][7].ToString();
+                                cmd.Parameters.Add("@Phone", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][8].ToString();
+                                cmd.Parameters.Add("@MainAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][9].ToString();
+                                cmd.Parameters.Add("@MainAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][10].ToString();
+                                cmd.Parameters.Add("@MainAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][11].ToString();
+                                cmd.Parameters.Add("@MainCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][12].ToString();
+                                cmd.Parameters.Add("@MainState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][13].ToString();
+                                cmd.Parameters.Add("@MainZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][14].ToString();
+                                cmd.Parameters.Add("@MainCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][15].ToString();
+                                cmd.Parameters.Add("@MailAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][16].ToString();
+                                cmd.Parameters.Add("@MailAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][17].ToString();
+                                cmd.Parameters.Add("@MailAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][18].ToString();
+                                cmd.Parameters.Add("@MailCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][19].ToString();
+                                cmd.Parameters.Add("@MailState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][20].ToString();
+                                cmd.Parameters.Add("@MailZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][21].ToString();
+                                cmd.Parameters.Add("@MailCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][22].ToString();
+                                cmd.Parameters.Add("@CanLogin", SqlDbType.Bit).Value = DtExcelData.Rows[i][23];
+                                cmd.Parameters.Add("@LoginName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][24].ToString();
+                                cmd.Parameters.Add("@BirthDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][25];
+                                cmd.Parameters.Add("@CurrencyCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][26].ToString();
+                                cmd.Parameters.Add("@LanguageID", SqlDbType.Int).Value = DtExcelData.Rows[i][27];
+                                cmd.Parameters.Add("@Gender", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][28].ToString();
+                                cmd.Parameters.Add("@TaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][29].ToString();
+                                cmd.Parameters.Add("@TaxCodeTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][30];
+                                cmd.Parameters.Add("@IsSalesTaxExempt", SqlDbType.Bit).Value = DtExcelData.Rows[i][31];
+                                cmd.Parameters.Add("@SalesTaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][32].ToString();
+                                cmd.Parameters.Add("@IsEmailSubscribed", SqlDbType.Bit).Value = DtExcelData.Rows[i][33];
+                                cmd.Parameters.Add("@Notes", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][34].ToString();
+                                cmd.Parameters.Add("@CreatedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][35];
+                                cmd.Parameters.Add("@ModifiedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][36];
+                                cmd.Parameters.Add("@CreatedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][37].ToString();
+                                cmd.Parameters.Add("@ModifiedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][38].ToString();
+                                cmd.ExecuteNonQuery();
+                                Console.WriteLine("Customer id=" + DtExcelData.Rows[i][0].ToString() + " " + "Inserted");
+                            }
+                        }
+                    }
+
+                    else if (value == 2)
+                    {
+                        SqlCommand com = new SqlCommand("SELECT * FROM Customer", Conn);
+                        SqlDataAdapter DaSqlcmd = new SqlDataAdapter(com);
+                        DaSqlcmd.Fill(DtSqlData);
+                        if (DtSqlData.Rows.Count == 0)
+                        {
+                            Console.WriteLine(" No Record Available");
+                        }
+                        else
+                        {
+                            //Funtion to display Orderstatuses table
+                            SqlDataReader reader = com.ExecuteReader();
+
+                            while (reader.Read())
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    Console.Write(reader.GetValue(i) + "\t");
+                                }
+                                Console.WriteLine("\n");
+                            }
+                            reader.Close();
+
+                            //Function to delete a RECORD FROM Orderstatuses table
+                            Console.WriteLine("Do you want to delete any record Y/N");
+                            string delete = Console.ReadLine().ToLower();
+                            Console.WriteLine();
+                            while (delete != "y" && delete != "n")
+                            {
+                                Console.WriteLine("Wrong input Enter Y OR N only,Enter again");
+                                delete = Console.ReadLine().ToLower();
+                            }
+                            if (delete.ToLower() == "y")
+                            {
+                                Console.WriteLine("Enter Customer id of the record you want to delete");
+                                int Customerid = Convert.ToInt32(Console.ReadLine());
+                                SqlCommand cmd = new SqlCommand("DELETE FROM Customer WHERE CustomerID='" + Customerid + "'", Conn);
+                                cmd.ExecuteNonQuery();
+                                Console.WriteLine("Record Deleted:" + Customerid);
+
+                            }
+                        }
+                    }
+                    else if (value == 3)
+                    {
                         break;
                     }
                     else
                     {
-                        Flag = false;
+                        Console.WriteLine("Wrong option");
                     }
-
                 }
-                if (Flag)
+                catch
                 {
-                    SqlCommand cmd = new SqlCommand("UPDATE Customer SET FirstName=@FirstName,MiddleName=@MiddleName, LastName=@LastName, Company=@Company, CustomerTypeID=@CustomerTypeID, CustomerStatusID=@CustomerStatusID, Email=@Email, Phone=@Phone, MainAddress1=@MainAddress1, MainAddress2=@MainAddress2, MainAddress3=@MainAddress3, MainCity=@MainCity, MainState=@MainState, MainZip=@MainZip, MainCountry=@MainCountry, MailAddress1=@MailAddress1, MailAddress2=@MailAddress2, MailAddress3=@MailAddress3, MailCity=@MailCity, MailState=@MailState, MailZip=@MailZip, MailCountry=@MailCountry,CanLogin=@CanLogin, LoginName=@LoginName, BirthDate=@BirthDate, CurrencyCode=@CurrencyCode, LanguageID=@LanguageID, Gender=@Gender, TaxCode=@TaxCode, TaxCodeTypeID=@TaxCodeTypeID, IsSalesTaxExempt=@IsSalesTaxExempt, SalesTaxCode=@SalesTaxCode, IsEmailSubscribed=@IsEmailSubscribed, Notes=@Notes, CreatedDate=@CreatedDate, ModifiedDate=@ModifiedDate, CreatedBy=@CreatedBy, ModifiedBy=@ModifiedBy WHERE CustomerID=@CustomerID", Conn);
-                    cmd.Parameters.Add("@CustomerID", SqlDbType.Int).Value = DtExcelData.Rows[i][0];
-                    cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
-                    cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
-                    cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][3].ToString();
-                    cmd.Parameters.Add("@Company", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][4].ToString();
-                    cmd.Parameters.Add("@CustomerTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][5];
-                    cmd.Parameters.Add("@CustomerStatusID", SqlDbType.Int).Value = DtExcelData.Rows[i][6];
-                    cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][7].ToString();
-                    cmd.Parameters.Add("@Phone", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][8].ToString();
-                    cmd.Parameters.Add("@MainAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][9].ToString();
-                    cmd.Parameters.Add("@MainAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][10].ToString();
-                    cmd.Parameters.Add("@MainAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][11].ToString();
-                    cmd.Parameters.Add("@MainCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][12].ToString();
-                    cmd.Parameters.Add("@MainState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][13].ToString();
-                    cmd.Parameters.Add("@MainZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][14].ToString();
-                    cmd.Parameters.Add("@MainCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][15].ToString();
-                    cmd.Parameters.Add("@MailAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][16].ToString();
-                    cmd.Parameters.Add("@MailAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][17].ToString();
-                    cmd.Parameters.Add("@MailAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][18].ToString();
-                    cmd.Parameters.Add("@MailCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][19].ToString();
-                    cmd.Parameters.Add("@MailState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][20].ToString();
-                    cmd.Parameters.Add("@MailZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][21].ToString();
-                    cmd.Parameters.Add("@MailCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][22].ToString();
-                    cmd.Parameters.Add("@CanLogin", SqlDbType.Bit).Value = DtExcelData.Rows[i][23];
-                    cmd.Parameters.Add("@LoginName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][24].ToString();
-                    cmd.Parameters.Add("@BirthDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][25];
-                    cmd.Parameters.Add("@CurrencyCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][26].ToString();
-                    cmd.Parameters.Add("@LanguageID", SqlDbType.Int).Value = DtExcelData.Rows[i][27];
-                    cmd.Parameters.Add("@Gender", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][28].ToString();
-                    cmd.Parameters.Add("@TaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][29].ToString();
-                    cmd.Parameters.Add("@TaxCodeTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][30];
-                    cmd.Parameters.Add("@IsSalesTaxExempt", SqlDbType.Bit).Value = DtExcelData.Rows[i][31];
-                    cmd.Parameters.Add("@SalesTaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][32].ToString();
-                    cmd.Parameters.Add("@IsEmailSubscribed", SqlDbType.Bit).Value = DtExcelData.Rows[i][33];
-                    cmd.Parameters.Add("@Notes", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][34].ToString();
-                    cmd.Parameters.Add("@CreatedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][35];
-                    cmd.Parameters.Add("@ModifiedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][36];
-                    cmd.Parameters.Add("@CreatedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][37].ToString();
-                    cmd.Parameters.Add("@ModifiedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][38].ToString();
-                    cmd.ExecuteNonQuery();
-                    Console.WriteLine("Customer id=" + DtExcelData.Rows[i][0].ToString() + " " + " Updated");
+                    Console.WriteLine("Wrong input\n ");
                 }
-                else 
+                Console.WriteLine("Do you want to go back to Customer menu:");
+                allow = Console.ReadLine().ToLower();
+                Console.WriteLine();
+                while (allow != "y" && allow != "n")
                 {
-                    //sqlBulkCopy.DestinationTableName = "dbo.Customer";
-                    //sqlBulkCopy.WriteToServer(DtExcelData.Rows[i].Table);
-                        
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Customer(FirstName,MiddleName,LastName,Company,CustomerTypeID,CustomerStatusID, Email, Phone, MainAddress1, MainAddress2, MainAddress3, MainCity, MainState, MainZip, MainCountry, MailAddress1, MailAddress2, MailAddress3, MailCity, MailState, MailZip, MailCountry,CanLogin,LoginName,BirthDate,CurrencyCode,LanguageID,Gender,TaxCode,TaxCodeTypeID,IsSalesTaxExempt,SalesTaxCode,IsEmailSubscribed,Notes,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy) VALUES(@FirstName,@MiddleName,@LastName,@Company,@CustomerTypeID,@CustomerStatusID,@Email,@Phone,@MainAddress1,@MainAddress2,@MainAddress3,@MainCity,@MainState,@MainZip,@MainCountry,@MailAddress1,@MailAddress2,@MailAddress3,@MailCity,@MailState,@MailZip,@MailCountry,@CanLogin,@LoginName,@BirthDate,@CurrencyCode,@LanguageID,@Gender,@TaxCode,@TaxCodeTypeID,@IsSalesTaxExempt,@SalesTaxCode,@IsEmailSubscribed,@Notes,@CreatedDate,@ModifiedDate,@CreatedBy,@ModifiedBy)", Conn);
-                    cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][1].ToString();
-                    cmd.Parameters.Add("@MiddleName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][2].ToString();
-                    cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][3].ToString();
-                    cmd.Parameters.Add("@Company", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][4].ToString();
-                    cmd.Parameters.Add("@CustomerTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][5];
-                    cmd.Parameters.Add("@CustomerStatusID", SqlDbType.Int).Value = DtExcelData.Rows[i][6];
-                    cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][7].ToString();
-                    cmd.Parameters.Add("@Phone", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][8].ToString();
-                    cmd.Parameters.Add("@MainAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][9].ToString();
-                    cmd.Parameters.Add("@MainAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][10].ToString();
-                    cmd.Parameters.Add("@MainAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][11].ToString();
-                    cmd.Parameters.Add("@MainCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][12].ToString();
-                    cmd.Parameters.Add("@MainState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][13].ToString();
-                    cmd.Parameters.Add("@MainZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][14].ToString();
-                    cmd.Parameters.Add("@MainCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][15].ToString();
-                    cmd.Parameters.Add("@MailAddress1", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][16].ToString();
-                    cmd.Parameters.Add("@MailAddress2", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][17].ToString();
-                    cmd.Parameters.Add("@MailAddress3", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][18].ToString();
-                    cmd.Parameters.Add("@MailCity", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][19].ToString();
-                    cmd.Parameters.Add("@MailState", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][20].ToString();
-                    cmd.Parameters.Add("@MailZip", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][21].ToString();
-                    cmd.Parameters.Add("@MailCountry", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][22].ToString();
-                    cmd.Parameters.Add("@CanLogin", SqlDbType.Bit).Value = DtExcelData.Rows[i][23];
-                    cmd.Parameters.Add("@LoginName", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][24].ToString();
-                    cmd.Parameters.Add("@BirthDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][25];
-                    cmd.Parameters.Add("@CurrencyCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][26].ToString();
-                    cmd.Parameters.Add("@LanguageID", SqlDbType.Int).Value = DtExcelData.Rows[i][27];
-                    cmd.Parameters.Add("@Gender", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][28].ToString();
-                    cmd.Parameters.Add("@TaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][29].ToString();
-                    cmd.Parameters.Add("@TaxCodeTypeID", SqlDbType.Int).Value = DtExcelData.Rows[i][30];
-                    cmd.Parameters.Add("@IsSalesTaxExempt", SqlDbType.Bit).Value = DtExcelData.Rows[i][31];
-                    cmd.Parameters.Add("@SalesTaxCode", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][32].ToString();
-                    cmd.Parameters.Add("@IsEmailSubscribed", SqlDbType.Bit).Value = DtExcelData.Rows[i][33];
-                    cmd.Parameters.Add("@Notes", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][34].ToString();
-                    cmd.Parameters.Add("@CreatedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][35];
-                    cmd.Parameters.Add("@ModifiedDate", SqlDbType.DateTime).Value = DtExcelData.Rows[i][36];
-                    cmd.Parameters.Add("@CreatedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][37].ToString();
-                    cmd.Parameters.Add("@ModifiedBy", SqlDbType.NVarChar).Value = DtExcelData.Rows[i][38].ToString();
-                    cmd.ExecuteNonQuery();
-                    Console.WriteLine("Customer id=" + DtExcelData.Rows[i][0].ToString() + " " + "Inserted");
+                    Console.WriteLine("Wrong input Enter Y OR N only\n");
+                    Console.WriteLine("Do you want to go back to Customer menu:");
+                    allow = Console.ReadLine().ToLower();
+                    Console.WriteLine();
                 }
-            }
 
+            } while (allow.ToLower() == "y");
         }
+
         public void orders()
         {
             Boolean flag = true;
@@ -334,6 +419,7 @@ namespace ClassLibrary1
                 try
                 {
                     int value = Convert.ToInt32(Console.ReadLine());
+                    DtSqlData = new DataTable();
                     if (value == 1)
                     {
                         Console.WriteLine("Enter OrderStatus\n");
@@ -432,21 +518,39 @@ namespace ClassLibrary1
         public void order_history()
         {
             Boolean flag = false;
+            Boolean upd_flag = false;
             OleDbConnection exlconn = new OleDbConnection(Training_Orders_Engine.Properties.Settings.Default.OrderHconnStr + ".xlsx" + ";" + Training_Orders_Engine.Properties.Settings.Default.ExProp);        //to be changed
             OleDbCommand exlcommand_reader = new OleDbCommand("select * from [sheet1$]", exlconn);
             exlconn.Open();
             OleDbDataReader exl_dr = exlcommand_reader.ExecuteReader();
             while (exl_dr.Read())
             {
-    
-                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
-     
+                flag = false;
+                upd_flag = false;
+                SqlCommand sqlcommand_reader = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn);    
                 SqlDataReader sql_dr = sqlcommand_reader.ExecuteReader();
-                
                 while (sql_dr.Read())
                 {
-                    if (sql_dr[1].ToString() == exl_dr[0].ToString())
+                    
+                    if (sql_dr[0].ToString() == exl_dr[1].ToString())           //checks if OrderStatusID has a valid value
                     {
+                        SqlConnection Conn_OH = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);
+                        SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn_OH);
+                        Conn_OH.Open();
+                        SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader();
+                        while (sql_dr_OH.Read())
+                        {
+                            if (exl_dr[0].ToString() == sql_dr_OH[1].ToString())        //checks if OrderID is already present in the db
+                            {
+                                upd_flag = true;
+                                break;
+                            }
+                            else
+                            {
+                                upd_flag = false; 
+                            }
+                        }
+                        sql_dr_OH.Close();
                         flag = true;
                         break;
                     }
@@ -456,7 +560,7 @@ namespace ClassLibrary1
                     }
                 }
                 sql_dr.Close();
-                if (flag)
+                if (upd_flag)
                 {
                     SqlCommand cmd = new SqlCommand("update [dbo].[OrderHistory] set OrderID=@OrderID, OrderStatusID=@OrderStatusID, CreatedDate=@CreatedDate, CreatedBy=@CreatedBy where OrderID=" + exl_dr[0].ToString());
                     cmd.CommandType = CommandType.Text;
@@ -466,9 +570,9 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());                
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("OrderID: " + exl_dr[0] + "Updated");
+                    Console.WriteLine("OrderID: " + exl_dr[0] + " Updated");
                 }
-                else
+                else if(flag)
                 {
                     SqlCommand cmd = new SqlCommand("Insert into [dbo].[OrderHistory] values (@OrderID, @OrderStatusID, @CreatedDate, @CreatedBy)");
                     cmd.CommandType = CommandType.Text;
@@ -477,37 +581,14 @@ namespace ClassLibrary1
                     cmd.Parameters.AddWithValue("@OrderStatusID", Int32.Parse(exl_dr[1].ToString()));
                     cmd.Parameters.AddWithValue("@CreatedDate", exl_dr[2].ToString());
                     cmd.Parameters.AddWithValue("@CreatedBy", exl_dr[3].ToString());
-                    Conn.Open();
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("OrderID: " + exl_dr[0] + "Inserted");
+                    Console.WriteLine("OrderID: " + exl_dr[0] + " Inserted");
                 }
-            }
-            //Fetching OrderStatusDescription for OrderStatusTable
-            SqlCommand sqlcommand_reader_OH = new SqlCommand("select * from [dbo].[OrderHistory]", Conn);
-            SqlDataReader sql_dr_OH = sqlcommand_reader_OH.ExecuteReader(); 
-            while (sql_dr_OH.Read())
-            {
-                SqlConnection Conn_OS = new SqlConnection(Training_Orders_Engine.Properties.Settings.Default.ConnStr);          //seperate SQL connenction required for second Data reader object
-                SqlCommand sqlcommand_reader_OS = new SqlCommand("select * from [dbo].[OrderStatuses]", Conn_OS);
-                Conn_OS.Open();
-
-                SqlDataReader sql_dr_OS = sqlcommand_reader_OS.ExecuteReader();
-                while (sql_dr_OS.Read())
+                else
                 {
-                    if (sql_dr_OH[2] == sql_dr_OS[0])
-                    {
-                        Console.WriteLine(sql_dr_OS[0].ToString());
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid OrderStatusID");
-                        break;
-                    }
+                    Console.WriteLine("Invalid OrderStatusID");
                 }
-                sql_dr_OS.Close();
             }
-            sql_dr_OH.Close();
         }
         
         public static void Main(string[] args)
@@ -546,14 +627,14 @@ namespace ClassLibrary1
                 {
                     Console.WriteLine("Please enter numeric values only");
                 }
-                Console.Write("Do you wish to continue (Y/N): ");
+                Console.Write("Do you want to exit application (Y/N): ");
                 choice = Console.ReadKey().KeyChar;
                 while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n')
                 {
                     Console.Write("\nInvalid Input (Valid entries: Y or N). Please enter again: ");
                     choice = Console.ReadKey().KeyChar;
                 }
-            } while (choice == 'Y' || choice == 'y');
+            } while (choice == 'N' || choice == 'n');
             Console.ReadLine();
         }
 
